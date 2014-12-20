@@ -1,0 +1,67 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+defaultTasks ['clean','distZip']
+
+buildscript {
+    buildDir = 'dist'
+    version = "0.1";
+}
+
+allprojects
+{
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+  mainClassName = 'com.pic.organizer.Main'
+}
+
+sourceSets {
+  main
+  {
+    java
+    {
+      srcDir 'src'
+    }
+    resources
+    {
+      srcDir 'resources'
+    }
+  }
+  test
+  {
+    java
+    {
+      srcDir 'test'
+    }
+  }
+}
+
+configurations {
+}
+
+dependencies {
+  compile 'com.drewnoakes:metadata-extractor:2.4.0-beta-1',
+          'com.google.apis:google-api-services-youtube:v3-rev79-1.17.0-rc',
+          'com.google.http-client:google-http-client-jackson2:1.16.0-rc',
+          'com.google.oauth-client:google-oauth-client-jetty:1.16.0-rc',
+          'javax.servlet:servlet-api:2.4',
+          'commons-io:commons-io:2.4'
+
+
+  testCompile 'junit:junit:4.10'
+
+}
+
+repositories {
+  mavenCentral()
+  maven {url "http://google-api-client-libraries.appspot.com/mavenrepo"}
+
+}
+
+
+jar {
+  archiveName = "PicOrganizer.jar"
+}
+
+distZip.dependsOn test
