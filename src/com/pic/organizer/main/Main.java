@@ -1,4 +1,4 @@
-package com.pic.organizer;
+package com.pic.organizer.main;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;

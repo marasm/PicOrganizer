@@ -5,13 +5,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pic.organizer.MainController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pic.organizer.main.MainController">
    <children>
       <MenuBar minWidth="-Infinity" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem id="menuFileQuit" fx:id="menuFileQuit" mnemonicParsing="false" onAction="#handleQuitMenuItem" text="Quit" />
+              <MenuItem id="menuFileQuit" mnemonicParsing="false" onAction="#handleQuitMenuItem" text="Quit" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -38,6 +38,6 @@
       <TextArea id="outputTxt" fx:id="outputTxt" editable="false" layoutX="14.0" layoutY="318.0" prefHeight="148.0" prefWidth="617.0" wrapText="true" />
       <Label layoutX="14.0" layoutY="297.0" text="Output" />
       <CheckBox id="resizeForWeb" fx:id="resizeForWeb" layoutX="248.0" layoutY="223.0" mnemonicParsing="false" text="Resize for Web?" />
-      <Button fx:id="startBtn" layoutX="262.0" layoutY="265.0" mnemonicParsing="false" text="Start Processing" />
+      <Button fx:id="startBtn" layoutX="262.0" layoutY="265.0" mnemonicParsing="false" onAction="#handleStartProcessing" text="Start Processing" />
    </children>
 </AnchorPane>
