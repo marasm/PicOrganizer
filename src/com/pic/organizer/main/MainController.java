@@ -25,8 +25,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import com.marasm.util.StringUtil;
 import com.pic.organizer.services.ImageFileService;
-import com.pic.organizer.util.StringUtil;
 
 public class MainController implements Initializable
 {

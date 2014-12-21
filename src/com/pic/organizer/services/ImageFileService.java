@@ -7,8 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pic.organizer.exceptions.OperationFailedException;
-import com.pic.organizer.util.StringUtil;
+import com.marasm.exceptions.OperationFailedException;
+import com.marasm.util.StringUtil;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
 /**
@@ -36,10 +36,10 @@ public class ImageFileService
   {
     List<ImageInfoVO> res = new ArrayList<ImageInfoVO>();
     
-    //TODO
     File srcDirF = new File(inSrcDir);
     if (srcDirF.isDirectory())
     {
+      //TODO
       
     }
     else
