@@ -3,6 +3,8 @@ package com.pic.organizer.main;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -27,6 +29,7 @@ import javafx.stage.Window;
 
 import com.marasm.util.StringUtil;
 import com.pic.organizer.services.ImageFileService;
+import com.pic.organizer.valueobjects.ImageInfoVO;
 
 public class MainController implements Initializable
 {
@@ -38,6 +41,8 @@ public class MainController implements Initializable
   private TextField maxFilesInDir;
   @FXML
   private CheckBox resizeForWeb;
+  @FXML
+  private CheckBox recursive;
   @FXML
   private TextArea outputTxt;
   
@@ -108,11 +113,49 @@ public class MainController implements Initializable
     if(validateInputs())
     {
       logNormal("Staring processing...");
+      ImageFileService service = getFileService();
+      try
+      {
+        startBtn.setDisable(true);
+        logNormal("Building the list of files...");
+        List<ImageInfoVO> imageList = service.getImagesFromDirectories(
+            srcDirList.getItems(), recursive.isSelected());
+        logNormal("Sorting by date taken...");
+        Collections.sort(imageList, (imageVO1, imageVO2) -> 
+          {
+            if (imageVO1 == null || imageVO1.getDateTaken() == null)
+              return -1;
+            if (imageVO2 == null || imageVO2.getDateTaken() == null)
+              return 1;
+            return imageVO1.getDateTaken().compareTo(imageVO2.getDateTaken());
+          });
+        for (ImageInfoVO imageVO : imageList)
+        {
+          System.out.println("Proccesssed file: " + imageVO.toString());
+        }
+      }
+      catch (Exception e)
+      {
+        displayModal("Error. Check output for details");
+        logError(e.getMessage());
+      }
+      finally
+      {
+        startBtn.setDisable(false);
+      }
+      logNormal("All Done.");
+      logNormal("------------------------------------------------");
     }
     else
     {
       displayModal("Error. Check output for details");
     }
+  }
+  
+  @FXML 
+  public void handleClearOutput(ActionEvent inEvent)
+  {
+    outputTxt.clear();
   }
 
   @FXML
@@ -169,12 +212,14 @@ public class MainController implements Initializable
     if (srcDirList.getItems() == null || srcDirList.getItems().isEmpty())
     {
       logError("You must specify at least one source directory");
+      return false;
     }
     if (StringUtil.isEmpty(destDir.getText()))
     {
       logError("You must specify the destination directory");
+      return false;
     }
-    return false;
+    return true;
   }
 
   private Scene getScene()
@@ -265,6 +310,16 @@ public class MainController implements Initializable
   public void setStartBtn(Button inStartBtn)
   {
     startBtn = inStartBtn;
+  }
+
+  public CheckBox getRecursive()
+  {
+    return recursive;
+  }
+
+  public void setRecursive(CheckBox inRecursive)
+  {
+    recursive = inRecursive;
   }
 	
 	
