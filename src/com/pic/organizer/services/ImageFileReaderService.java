@@ -21,7 +21,7 @@ import com.pic.organizer.valueobjects.ImageInfoVO;
  * @author mkorotkovas
  *
  */
-public class ImageFileService
+public class ImageFileReaderService
 {
   private static final List<String> IMAGE_FILE_EXT = Arrays.asList(
       ".png",".jpg",".PNG",".JPG");

@@ -28,7 +28,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import com.marasm.util.StringUtil;
-import com.pic.organizer.services.ImageFileService;
+import com.pic.organizer.services.ImageFileReaderService;
+import com.pic.organizer.services.ImageFileWriterService;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
 public class MainController implements Initializable
@@ -113,14 +114,16 @@ public class MainController implements Initializable
     if(validateInputs())
     {
       logNormal("Staring processing...");
-      ImageFileService service = getFileService();
+      ImageFileReaderService fileReaderService = getFileReaderService();
+      ImageFileWriterService fileWriterService = getFileWriterService();
       try
       {
         startBtn.setDisable(true);
         logNormal("Building the list of files...");
-        List<ImageInfoVO> imageList = service.getImagesFromDirectories(
+        List<ImageInfoVO> imageList = 
+            fileReaderService.getImagesFromDirectories(
             srcDirList.getItems(), recursive.isSelected());
-        logNormal("Sorting by date taken...");
+        logNormal("Sorting " + imageList.size() + " images by date taken...");
         Collections.sort(imageList, (imageVO1, imageVO2) -> 
           {
             if (imageVO1 == null || imageVO1.getDateTaken() == null)
@@ -129,10 +132,9 @@ public class MainController implements Initializable
               return 1;
             return imageVO1.getDateTaken().compareTo(imageVO2.getDateTaken());
           });
-        for (ImageInfoVO imageVO : imageList)
-        {
-          System.out.println("Proccesssed file: " + imageVO.toString());
-        }
+        logNormal("Writing files to destination directory...");
+        //TODO
+        
       }
       catch (Exception e)
       {
@@ -173,9 +175,14 @@ public class MainController implements Initializable
     System.exit(0);
   }
   
-  protected ImageFileService getFileService()
+  protected ImageFileReaderService getFileReaderService()
   {
-    return new ImageFileService();
+    return new ImageFileReaderService();
+  }
+
+  protected ImageFileWriterService getFileWriterService()
+  {
+    return new ImageFileWriterService();
   }
   
   private void displayModal(String inMessage)
