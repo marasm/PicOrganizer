@@ -28,15 +28,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import com.marasm.listeners.LogEventListener;
-import com.marasm.listeners.ProgressListener;
 import com.marasm.util.StringUtil;
 import com.pic.organizer.services.ImageFileReaderService;
 import com.pic.organizer.services.ImageFileWriterService;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
-public class MainController implements Initializable, LogEventListener, 
-ProgressListener
+public class MainController implements Initializable
 {
   @FXML
 	private ListView<String> srcDirList;
@@ -143,13 +140,17 @@ ProgressListener
               return 1;
             return imageVO1.getDateTaken().compareTo(imageVO2.getDateTaken());
           });
-        //TODO
+
+        logNormal("Writing images to destination directory...");
         progressBar.progressProperty().bind(fileWriterService.progressProperty());
         fileWriterService.setOnSucceeded((event) -> 
         {
           startBtn.setDisable(false);
+          logNormal("All Done.");
+          logNormal("------------------------------------------------");
         });
         fileWriterService.writeImageFilesToDestDirectory(imageList, 
+            destDir.getText(),
             Integer.parseInt(maxFilesInDir.getText()));
         
       }
@@ -158,8 +159,6 @@ ProgressListener
         displayModal("Error. Check output for details");
         logError(e.getMessage());
       }
-      
-      logNormal("------------------------------------------------");
     }
     else
     {
@@ -192,23 +191,7 @@ ProgressListener
     System.exit(0);
   }
   
-  @Override
-  public void progressChanged(double inProgress)
-  {
-    System.out.println("set progress called=" + inProgress);
-    if (inProgress >= 1.0)
-    {
-      startBtn.setDisable(false);
-    }
-    progressBar.setProgress(inProgress);
-  }
 
-  @Override
-  public void logEventPerformed(String inLogMessage)
-  {
-    logNormal(inLogMessage);
-  }
-  
   protected ImageFileReaderService getFileReaderService()
   {
     return new ImageFileReaderService();
