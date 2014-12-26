@@ -54,6 +54,10 @@ public class MainController implements Initializable
   private Button startBtn;
   @FXML
   private ProgressBar progressBar;
+  
+  
+  private ImageFileReaderService fileReaderService;
+  private ImageFileWriterService fileWriterService;
 	
 	@Override
   public void initialize(URL inLocation, ResourceBundle inResources)
@@ -63,6 +67,10 @@ public class MainController implements Initializable
 	      {
 	        handleSrcListValueChanged(oldValue, newValue);
 	      });
+	  
+    fileReaderService = getFileReaderService();
+    fileWriterService = getFileWriterService();
+    
     logNormal("Initialization success.");
     
     //TEST CODE
@@ -122,8 +130,7 @@ public class MainController implements Initializable
     if(validateInputs())
     {
       logNormal("Staring processing...");
-      ImageFileReaderService fileReaderService = getFileReaderService();
-      ImageFileWriterService fileWriterService = getFileWriterService();
+
       try
       {
         startBtn.setDisable(true);
@@ -142,6 +149,7 @@ public class MainController implements Initializable
           });
 
         logNormal("Writing images to destination directory...");
+        fileWriterService.reset();
         progressBar.progressProperty().bind(fileWriterService.progressProperty());
         fileWriterService.setOnSucceeded((event) -> 
         {
@@ -164,6 +172,21 @@ public class MainController implements Initializable
     {
       displayModal("Error. Check output for details");
     }
+  }
+  
+  @FXML
+  public void handleStopBtn(ActionEvent inEvent)
+  {
+    if (fileWriterService.isRunning())
+    {
+      boolean cancelSuccess = fileWriterService.cancel();
+      if (cancelSuccess)
+        logNormal("Cancel successful.");
+      else
+        logError("Cancel failed.");
+    }
+    else
+      logError("No active task to cancel.");
   }
   
   @FXML 
