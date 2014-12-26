@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -27,12 +28,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import com.marasm.listeners.LogEventListener;
+import com.marasm.listeners.ProgressListener;
 import com.marasm.util.StringUtil;
 import com.pic.organizer.services.ImageFileReaderService;
 import com.pic.organizer.services.ImageFileWriterService;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
-public class MainController implements Initializable
+public class MainController implements Initializable, LogEventListener, 
+ProgressListener
 {
   @FXML
 	private ListView<String> srcDirList;
@@ -51,6 +55,8 @@ public class MainController implements Initializable
   private Button removeSrcDirBtn;
   @FXML
   private Button startBtn;
+  @FXML
+  private ProgressBar progressBar;
 	
 	@Override
   public void initialize(URL inLocation, ResourceBundle inResources)
@@ -61,6 +67,11 @@ public class MainController implements Initializable
 	        handleSrcListValueChanged(oldValue, newValue);
 	      });
     logNormal("Initialization success.");
+    
+    //TEST CODE
+    recursive.setSelected(true);
+    srcDirList.getItems().add("/Users/mkorotkovas/Desktop/PicTestSrc");
+    destDir.setText("/Users/mkorotkovas/Desktop/PicTestDest");
   }
 
   @FXML
@@ -132,8 +143,14 @@ public class MainController implements Initializable
               return 1;
             return imageVO1.getDateTaken().compareTo(imageVO2.getDateTaken());
           });
-        logNormal("Writing files to destination directory...");
         //TODO
+        progressBar.progressProperty().bind(fileWriterService.progressProperty());
+        fileWriterService.setOnSucceeded((event) -> 
+        {
+          startBtn.setDisable(false);
+        });
+        fileWriterService.writeImageFilesToDestDirectory(imageList, 
+            Integer.parseInt(maxFilesInDir.getText()));
         
       }
       catch (Exception e)
@@ -141,11 +158,7 @@ public class MainController implements Initializable
         displayModal("Error. Check output for details");
         logError(e.getMessage());
       }
-      finally
-      {
-        startBtn.setDisable(false);
-      }
-      logNormal("All Done.");
+      
       logNormal("------------------------------------------------");
     }
     else
@@ -165,6 +178,10 @@ public class MainController implements Initializable
   {
     srcDirList.setItems(FXCollections.observableArrayList());
     removeSrcDirBtn.setDisable(true);
+    destDir.setText(null);
+    recursive.setSelected(false);
+    progressBar.setProgress(0);
+    startBtn.setDisable(false);
     logNormal("All fields reset.");
     
   }
@@ -173,6 +190,23 @@ public class MainController implements Initializable
   public void handleQuitMenuItem(ActionEvent inEvent)
   {
     System.exit(0);
+  }
+  
+  @Override
+  public void progressChanged(double inProgress)
+  {
+    System.out.println("set progress called=" + inProgress);
+    if (inProgress >= 1.0)
+    {
+      startBtn.setDisable(false);
+    }
+    progressBar.setProgress(inProgress);
+  }
+
+  @Override
+  public void logEventPerformed(String inLogMessage)
+  {
+    logNormal(inLogMessage);
   }
   
   protected ImageFileReaderService getFileReaderService()
@@ -328,6 +362,18 @@ public class MainController implements Initializable
   {
     recursive = inRecursive;
   }
+
+  public ProgressBar getProgressBar()
+  {
+    return progressBar;
+  }
+
+  public void setProgressBar(ProgressBar inProgressBar)
+  {
+    progressBar = inProgressBar;
+  }
+
+  
 	
 	
 

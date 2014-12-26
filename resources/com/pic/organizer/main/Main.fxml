@@ -34,12 +34,13 @@
       <TextField id="destDir" fx:id="destDir" layoutX="14.0" layoutY="182.0" prefHeight="26.0" prefWidth="518.0" />
       <Button id="browseDestDirBtn" layoutX="549.0" layoutY="182.0" mnemonicParsing="false" onAction="#handleSelectDestDirectory" prefHeight="26.0" prefWidth="67.0" text="Browse" />
       <Label layoutX="14.0" layoutY="224.0" text="Max  files in directory" />
-      <TextField id="maxFilesInDir" fx:id="maxFilesInDir" layoutX="148.0" layoutY="219.0" prefHeight="26.0" prefWidth="54.0" />
-      <TextArea id="outputTxt" fx:id="outputTxt" editable="false" layoutX="14.0" layoutY="318.0" prefHeight="148.0" prefWidth="617.0" wrapText="true" />
-      <Label layoutX="14.0" layoutY="297.0" text="Output" />
+      <TextField id="maxFilesInDir" fx:id="maxFilesInDir" layoutX="148.0" layoutY="219.0" prefHeight="26.0" prefWidth="54.0" text="400" />
+      <TextArea id="outputTxt" fx:id="outputTxt" editable="false" layoutX="14.0" layoutY="309.0" prefHeight="137.0" prefWidth="617.0" wrapText="true" />
+      <Label layoutX="14.0" layoutY="288.0" text="Output" />
       <CheckBox id="resizeForWeb" fx:id="resizeForWeb" layoutX="248.0" layoutY="223.0" mnemonicParsing="false" text="Resize for Web?" />
-      <Button fx:id="startBtn" layoutX="262.0" layoutY="265.0" mnemonicParsing="false" onAction="#handleStartProcessing" text="Start Processing" />
+      <Button fx:id="startBtn" layoutX="262.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleStartProcessing" text="Start Processing" />
       <CheckBox fx:id="recursive" layoutX="140.0" layoutY="40.0" mnemonicParsing="false" text="Include subfolders" />
-      <Hyperlink fx:id="clearOutput" layoutX="583.0" layoutY="293.0" onAction="#handleClearOutput" text="Clear" />
+      <Hyperlink fx:id="clearOutput" layoutX="583.0" layoutY="284.0" onAction="#handleClearOutput" text="Clear" />
+      <ProgressBar fx:id="progressBar" layoutX="431.0" layoutY="455.0" prefWidth="200.0" progress="0.0" />
    </children>
 </AnchorPane>
