@@ -46,6 +46,8 @@ public class MainController implements Initializable
   @FXML
   private CheckBox recursive;
   @FXML
+  private CheckBox includeVideos;
+  @FXML
   private TextArea outputTxt;
   
   @FXML
@@ -56,8 +58,8 @@ public class MainController implements Initializable
   private ProgressBar progressBar;
   
   
-  private ImageFileReaderService fileReaderService;
-  private ImageFileWriterService fileWriterService;
+  private transient ImageFileReaderService fileReaderService;
+  private transient ImageFileWriterService fileWriterService;
 	
 	@Override
   public void initialize(URL inLocation, ResourceBundle inResources)
@@ -137,7 +139,8 @@ public class MainController implements Initializable
         logNormal("Building the list of files...");
         List<ImageInfoVO> imageList = 
             fileReaderService.getImagesFromDirectories(
-            srcDirList.getItems(), recursive.isSelected());
+            srcDirList.getItems(), 
+            recursive.isSelected(), includeVideos.isSelected());
         logNormal("Sorting " + imageList.size() + " images by date taken...");
         Collections.sort(imageList, (imageVO1, imageVO2) -> 
           {
@@ -377,6 +380,16 @@ public class MainController implements Initializable
   public void setProgressBar(ProgressBar inProgressBar)
   {
     progressBar = inProgressBar;
+  }
+
+  public CheckBox getIncludeVideos()
+  {
+    return includeVideos;
+  }
+
+  public void setIncludeVideos(CheckBox inIncludeVideos)
+  {
+    includeVideos = inIncludeVideos;
   }
 
   

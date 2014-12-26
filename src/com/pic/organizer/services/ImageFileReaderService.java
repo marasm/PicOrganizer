@@ -5,7 +5,7 @@ package com.pic.organizer.services;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -23,26 +23,27 @@ import com.pic.organizer.valueobjects.ImageInfoVO;
  */
 public class ImageFileReaderService
 {
-  private static final List<String> IMAGE_FILE_EXT = Arrays.asList(
-      ".png",".jpg",".PNG",".JPG");
+  
   
   
   public List<ImageInfoVO> getImagesFromDirectories(
-      List<String> inSourceDirList, boolean inRecursive)
+      List<String> inSourceDirList, 
+      boolean inRecursive, boolean inIncludeVideos)
   throws OperationFailedException
   {
     List<ImageInfoVO> res = new ArrayList<ImageInfoVO>();
     
     for (String curSrcDir : inSourceDirList)
     {
-      res.addAll(getImagesFromDirectory(curSrcDir, inRecursive));
+      res.addAll(getImagesFromDirectory(curSrcDir, 
+          inRecursive, inIncludeVideos));
     }
     
     return res;
   }
   
   public List<ImageInfoVO> getImagesFromDirectory(String inSrcDir, 
-      boolean inRecursive)
+      boolean inRecursive, boolean inIncludeVideos)
   throws OperationFailedException
   {
     List<ImageInfoVO> res = new ArrayList<ImageInfoVO>();
@@ -52,16 +53,15 @@ public class ImageFileReaderService
     {
       File[] fileArray = srcDirF.listFiles((file) -> 
       {
-        return (file.isFile() && 
-            IMAGE_FILE_EXT.contains(
-                FileUtil.getExtentionFromFileName(file.getName()))) ||
+        return FileUtil.isAnImageFile(file) ||
+              (FileUtil.isAVideoFile(file) && inIncludeVideos) ||
                 file.isDirectory();
       });
       for (File file : fileArray)
       {
         try
         {
-          if(file.isFile())
+          if(FileUtil.isAnImageFile(file))
           {
             Metadata mt = ImageMetadataReader.readMetadata(file);
             Directory info = mt.getDirectory(ExifDirectory.class); 
@@ -73,10 +73,20 @@ public class ImageFileReaderService
             
             res.add(imageFileVO);
           }
+          else 
+          if (FileUtil.isAVideoFile(file))
+          {
+            res.add(new ImageInfoVO(file.getName(), 
+                inSrcDir, 
+                new Date(file.lastModified()), 
+                "UNKNOWN"));
+          }
+          else
           if(file.isDirectory() && inRecursive)
           {
             res.addAll(
-                getImagesFromDirectory(file.getAbsolutePath(), inRecursive));
+                getImagesFromDirectory(file.getAbsolutePath(), 
+                    inRecursive, inIncludeVideos));
           }
           
         }
