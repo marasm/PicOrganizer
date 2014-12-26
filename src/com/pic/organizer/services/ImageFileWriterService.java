@@ -22,13 +22,17 @@ public class ImageFileWriterService extends Service<Integer>
   
   private List<ImageInfoVO> imageList;
   private int maxFilesPerDir;
+  private String destDirectory;
   
   
   public void writeImageFilesToDestDirectory(List<ImageInfoVO> inImageList, 
+      String inDestDirectory,
       int inMaxFilesPerDir)
   {
     imageList = inImageList;
     maxFilesPerDir = inMaxFilesPerDir;
+    destDirectory = inDestDirectory;
+    
     if (!inImageList.isEmpty())
     {
       this.start();
@@ -53,6 +57,7 @@ public class ImageFileWriterService extends Service<Integer>
       int folderCount = 0;
       int sameDayFolderCount = 1;
       String curFolderName = null;
+      String curDestFilePath = null;
       for (ImageInfoVO imageVO : imageList)
       {
         if(isCancelled())
@@ -60,19 +65,31 @@ public class ImageFileWriterService extends Service<Integer>
         
         if (folderCount > maxFilesPerDir)
         {
-          
+          folderCount = 0;
+          if (curFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
+          {
+            sameDayFolderCount++;
+          }
         }
         if (StringUtil.isEmpty(curFolderName) || 
             !curFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
         {
-          curFolderName = sdf.format(imageVO.getDateTaken()) +
-              StringUtil.leftZeroPadNumber(sameDayFolderCount, 3);
           folderCount = 0;
         }
         
+        curFolderName = sdf.format(imageVO.getDateTaken()) +
+              StringUtil.leftZeroPadNumber(sameDayFolderCount, 3);
+        
+        curDestFilePath = destDirectory + "/" + curFolderName + "/" +
+            sfd.format(imageVO.getDateTaken()) + "_" + StringUtil.leftZeroPadNumber(totalCount, 6) + 
+            StringUtil.getExtentionFromFileName(imageVO.getName());
+        
+        // FileUtils.copyFile(
+        //   new File(imageVO.getSourcePath() + "/" + imageVO.getName()), 
+        //   new File(curDestFilePath);        
           
-        updateProgress(totalCount, imageList.size());
-//        FileUtils.copyFile(srcFile, destFile);
+        System.out.println("Dest file: " + curDestFilePath);
+          
         try
         {
           Thread.sleep(500);
@@ -80,6 +97,8 @@ public class ImageFileWriterService extends Service<Integer>
         catch (InterruptedException e)
         {
         }
+        
+        updateProgress(totalCount, imageList.size());
         
         folderCount++;
         totalCount++;
