@@ -3,15 +3,19 @@
  */
 package com.pic.organizer.services;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import org.apache.commons.io.FileUtils;
+import org.imgscalr.Scalr;
 
 import com.marasm.exceptions.OperationFailedException;
 import com.marasm.util.FileUtil;
@@ -29,17 +33,19 @@ public class ImageFileWriterService extends Service<Integer>
   private List<ImageInfoVO> imageList;
   private int maxFilesPerDir;
   private String destDirectory;
+  private boolean resizeForWeb;
   
   
   public void writeImageFilesToDestDirectory(List<ImageInfoVO> inImageList, 
       String inDestDirectory,
-      int inMaxFilesPerDir)
+      int inMaxFilesPerDir,
+      boolean inResizeForWeb)
       throws OperationFailedException
   {
     imageList = inImageList;
     maxFilesPerDir = inMaxFilesPerDir;
     destDirectory = inDestDirectory;
-    
+    resizeForWeb = inResizeForWeb;
     if (!inImageList.isEmpty())
     {
       try
@@ -102,10 +108,25 @@ public class ImageFileWriterService extends Service<Integer>
             StringUtil.leftZeroPadNumber(sameDayFileCount, 6) + 
             FileUtil.getExtentionFromFileName(imageVO.getName());
         
-         FileUtils.copyFile(
-           new File(imageVO.getSourcePath() + "/" + imageVO.getName()), 
-           new File(curDestFilePath));        
-          
+        if (resizeForWeb)
+        {
+          BufferedImage result = Scalr.resize(
+              ImageIO.read(new File(imageVO.getSourcePath() + "/" + imageVO.getName())), 
+              2600);
+          FileUtils.forceMkdir(new File(destDirectory + "/" + curFolderName));
+          File outFile = new File(curDestFilePath);
+          ImageIO.write(result, 
+              FileUtil.getExtentionFromFileName(imageVO.getName()).substring(1), 
+              outFile);
+        }
+        else
+        {
+          FileUtils.copyFile(
+              new File(imageVO.getSourcePath() + "/" + imageVO.getName()), 
+              new File(curDestFilePath));
+        }
+         
+        
         updateProgress(totalCount, imageList.size());
         
         sameDayFileCount++;

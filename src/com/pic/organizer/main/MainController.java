@@ -162,7 +162,8 @@ public class MainController implements Initializable
         });
         fileWriterService.writeImageFilesToDestDirectory(imageList, 
             destDir.getText(),
-            Integer.parseInt(maxFilesInDir.getText()));
+            Integer.parseInt(maxFilesInDir.getText()),
+            resizeForWeb.isSelected());
         
       }
       catch (Exception e)
