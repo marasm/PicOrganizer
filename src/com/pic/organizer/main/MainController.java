@@ -76,9 +76,9 @@ public class MainController implements Initializable
     logNormal("Initialization success.");
     
     //TEST CODE
-    recursive.setSelected(true);
-    srcDirList.getItems().add("/Users/mkorotkovas/Desktop/PicTestSrc");
-    destDir.setText("/Users/mkorotkovas/Desktop/PicTestDest");
+//    recursive.setSelected(true);
+//    srcDirList.getItems().add("/Users/mkorotkovas/Desktop/PicTestSrc");
+//    destDir.setText("/Users/mkorotkovas/Desktop/PicTestDest");
   }
 
   @FXML

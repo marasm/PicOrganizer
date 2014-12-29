@@ -1,12 +1,21 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
+apply plugin: 'macAppBundle'
 
 defaultTasks 'distZip'
 
 buildscript {
-    buildDir = 'dist'
-    version = "0.1";
+  buildDir = 'dist'
+  version = "0.1";
+  repositories 
+  {
+    mavenCentral()
+  }
+  dependencies 
+  {
+    classpath 'edu.sc.seis.gradle:macappbundle:2.0.0'
+  }
 }
 
 allprojects
@@ -16,12 +25,18 @@ allprojects
   mainClassName = 'com.pic.organizer.main.Main'
 }
 
+macAppBundle 
+{
+  mainClassName = 'com.pic.organizer.main.Main'
+  icon = 'resources/images/icon.icns'
+}
+
 sourceSets {
   main
   {
     java
     {
-      srcDir 'src'
+      srcDirs = ['src','Common/src']
     }
     resources
     {
@@ -43,14 +58,10 @@ configurations {
 dependencies {
   compile 'com.drewnoakes:metadata-extractor:2.4.0-beta-1',
           'org.imgscalr:imgscalr-lib:4.2',
-          'com.google.apis:google-api-services-youtube:v3-rev79-1.17.0-rc',
-          'com.google.http-client:google-http-client-jackson2:1.16.0-rc',
-          'com.google.oauth-client:google-oauth-client-jetty:1.16.0-rc',
-          'javax.servlet:servlet-api:2.4',
           'commons-io:commons-io:2.4'
 
-
   testCompile 'junit:junit:4.10'
+  
 
 }
 
