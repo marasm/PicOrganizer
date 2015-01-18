@@ -68,7 +68,7 @@ public class ImageFileReaderService
             
             ImageInfoVO imageFileVO = new ImageInfoVO(file.getName(), 
                 inSrcDir, 
-                info.getDate(ExifDirectory.TAG_DATETIME), 
+                info.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL), 
                 info.getString(ExifDirectory.TAG_MAKE));
             
             res.add(imageFileVO);
