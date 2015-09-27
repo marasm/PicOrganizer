@@ -92,7 +92,8 @@ public class ImageFileReaderService
         }
         catch (Exception e)
         {
-          throw new OperationFailedException("Error processing files: " + 
+          throw new OperationFailedException("Error processing file: " +
+              file.getAbsolutePath() + " - " +
               e.getMessage());
         }
       }
