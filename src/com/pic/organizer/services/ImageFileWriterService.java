@@ -80,7 +80,8 @@ public class ImageFileWriterService extends Service<Integer>
       int folderCount = 0;
       int sameDayFolderCount = 1;
       int sameDayFileCount = 1;
-      String curFolderName = null;
+      String curSubFolderName = null;
+      String curDestFolder = null;
       String curDestFilePath = null;
       for (ImageInfoVO imageVO : imageList)
       {
@@ -90,24 +91,26 @@ public class ImageFileWriterService extends Service<Integer>
         if (folderCount >= maxFilesPerDir)
         {
           folderCount = 0;
-          if (curFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
+          if (curSubFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
           {
             sameDayFolderCount++;
           }
         }
-        if (StringUtil.isEmpty(curFolderName) || 
-            !curFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
+        if (StringUtil.isEmpty(curSubFolderName) || 
+            !curSubFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
         {
           folderCount = 0;
           sameDayFolderCount = 1;
           sameDayFileCount = 1;
         }
         
-        //TODO if useDaySubfolders == false make it empty string
-        curFolderName = sdf.format(imageVO.getDateTaken()) + "_" +
-              StringUtil.leftZeroPadNumber(sameDayFolderCount, 3);
+        curSubFolderName = sdf.format(imageVO.getDateTaken()) + "_" +
+            StringUtil.leftZeroPadNumber(sameDayFolderCount, 3);
         
-        curDestFilePath = destDirectory + "/" + curFolderName + "/" +
+        curDestFolder = destDirectory + "/" + 
+            (useDaySubfolders ? curSubFolderName : ""); //ONLY use subfolders if requested
+        
+        curDestFilePath = curDestFolder + "/" +
             sdf.format(imageVO.getDateTaken()) + "_" + 
             StringUtil.leftZeroPadNumber(sameDayFileCount, 6) + 
             FileUtil.getExtentionFromFileName(imageVO.getName());
@@ -117,7 +120,7 @@ public class ImageFileWriterService extends Service<Integer>
           BufferedImage result = Scalr.resize(
               ImageIO.read(new File(imageVO.getSourcePath() + "/" + imageVO.getName())), 
               2600);
-          FileUtils.forceMkdir(new File(destDirectory + "/" + curFolderName));
+          FileUtils.forceMkdir(new File(curDestFolder));
           File outFile = new File(curDestFilePath);
           ImageIO.write(result, 
               FileUtil.getExtentionFromFileName(imageVO.getName()).substring(1), 
