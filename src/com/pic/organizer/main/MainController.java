@@ -48,6 +48,8 @@ public class MainController implements Initializable
   @FXML
   private CheckBox includeVideos;
   @FXML
+  private CheckBox useDaySubFolders;
+  @FXML
   private TextArea outputTxt;
   
   @FXML
@@ -125,6 +127,19 @@ public class MainController implements Initializable
     destDir.setText(selectedDirectory.getAbsolutePath());
     logNormal("Destination directory set to " + selectedDirectory.getAbsolutePath());
   }
+
+  @FXML
+  public void handleUseDaySubfolders(ActionEvent inEvent)
+  {
+    if (useDaySubFolders.isSelected())
+    {
+      maxFilesInDir.setDisable(false);
+    }
+    else
+    {
+      maxFilesInDir.setDisable(true);
+    }
+  }
   
   @FXML
   public void handleStartProcessing(ActionEvent inEvent)
@@ -162,6 +177,7 @@ public class MainController implements Initializable
         });
         fileWriterService.writeImageFilesToDestDirectory(imageList, 
             destDir.getText(),
+            useDaySubFolders.isSelected(),
             Integer.parseInt(maxFilesInDir.getText()),
             resizeForWeb.isSelected());
         

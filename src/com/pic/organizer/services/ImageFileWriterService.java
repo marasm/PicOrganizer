@@ -34,10 +34,12 @@ public class ImageFileWriterService extends Service<Integer>
   private int maxFilesPerDir;
   private String destDirectory;
   private boolean resizeForWeb;
+  private boolean useDaySubfolders;
   
   
   public void writeImageFilesToDestDirectory(List<ImageInfoVO> inImageList, 
       String inDestDirectory,
+      boolean inUseDaySubfolders,
       int inMaxFilesPerDir,
       boolean inResizeForWeb)
       throws OperationFailedException
@@ -46,6 +48,7 @@ public class ImageFileWriterService extends Service<Integer>
     maxFilesPerDir = inMaxFilesPerDir;
     destDirectory = inDestDirectory;
     resizeForWeb = inResizeForWeb;
+    useDaySubfolders = inUseDaySubfolders;
     if (!inImageList.isEmpty())
     {
       try
@@ -100,6 +103,7 @@ public class ImageFileWriterService extends Service<Integer>
           sameDayFileCount = 1;
         }
         
+        //TODO if useDaySubfolders == false make it empty string
         curFolderName = sdf.format(imageVO.getDateTaken()) + "_" +
               StringUtil.leftZeroPadNumber(sameDayFolderCount, 3);
         
