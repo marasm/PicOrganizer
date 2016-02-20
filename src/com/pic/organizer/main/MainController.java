@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,6 +22,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -94,6 +96,7 @@ public class MainController implements Initializable
     logNormal("Added new source directory " + selectedDirectory.getAbsolutePath());
   }
   
+  @FXML
   public void handleSrcListValueChanged(String inOldValue, String inNewValue)
   {
     if (inNewValue != null)
@@ -232,6 +235,28 @@ public class MainController implements Initializable
   public void handleQuitMenuItem(ActionEvent inEvent)
   {
     System.exit(0);
+  }
+
+  @FXML
+  public void handleAboutMenuItem(ActionEvent inEvent)
+  {
+    AnchorPane about;
+    try
+    {
+      about = (AnchorPane)FXMLLoader.load(getClass().getResource("About.fxml"));
+      Scene aboutScene = new Scene(about,390,235);
+      aboutScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+      Stage aboutStage = new Stage();
+      aboutStage.setTitle("About");
+      aboutStage.setScene(aboutScene);
+      aboutStage.initOwner(getWindow());
+      aboutStage.show();
+    }
+    catch (Exception e)
+    {
+      logError("Failed to load the About window information");
+    }
+    
   }
   
 
