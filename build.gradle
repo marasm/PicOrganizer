@@ -3,11 +3,18 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'macAppBundle'
 
+//apply from: 'resources/app.properties'
+
 defaultTasks 'distZip'
+
+def getAppVersion = { ->
+  Properties props = new Properties()
+  props.load(new FileInputStream("resources/app.properties"))
+  return props.appVersion
+}
 
 buildscript {
   buildDir = 'dist'
-  version = "0.1";
   repositories 
   {
     mavenCentral()
@@ -73,7 +80,8 @@ repositories {
 
 
 jar {
-  archiveName = "PicOrganizer.jar"
+  baseName = "PicOrganizer"
+  version = getAppVersion()
 }
 
 distZip.dependsOn test

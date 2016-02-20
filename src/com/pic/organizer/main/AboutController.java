@@ -12,6 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+import com.pic.organizer.util.AppProperties;
+
 /**
  * @author mkorotkovas
  *
@@ -25,7 +27,8 @@ public class AboutController implements Initializable
   @Override
   public void initialize(URL inArg0, ResourceBundle inArg1)
   {
-    aboutTxt.setText("Hello there!");
+    aboutTxt.setText("Application Version: " + 
+        AppProperties.getProperty("appVersion"));
   }
   
   @FXML
