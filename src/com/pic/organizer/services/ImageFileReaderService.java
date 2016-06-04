@@ -65,13 +65,17 @@ public class ImageFileReaderService
           {
             Metadata mt = ImageMetadataReader.readMetadata(file);
             Directory info = mt.getDirectory(ExifDirectory.class); 
-            
-            ImageInfoVO imageFileVO = new ImageInfoVO(file.getName(), 
+            //only process images that actually have the date && make tags
+            if (info.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL) &&
+                info.containsTag(ExifDirectory.TAG_MAKE))
+            {
+              ImageInfoVO imageFileVO = new ImageInfoVO(file.getName(), 
                 inSrcDir, 
                 info.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL), 
                 info.getString(ExifDirectory.TAG_MAKE));
-            
-            res.add(imageFileVO);
+              
+              res.add(imageFileVO);
+            }
           }
           else 
           if (FileUtil.isAVideoFile(file))

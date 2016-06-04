@@ -3,13 +3,12 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'macAppBundle'
 
-//apply from: 'resources/app.properties'
 
 defaultTasks 'distZip'
 
 def getAppVersion = { ->
   Properties props = new Properties()
-  props.load(new FileInputStream("resources/app.properties"))
+  props.load(new FileInputStream("/Users/mkorotkovas/Documents/workspace/PicOrganizer/resources/app.properties"))
   return props.appVersion
 }
 
