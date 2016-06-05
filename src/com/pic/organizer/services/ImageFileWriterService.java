@@ -118,7 +118,7 @@ public class ImageFileWriterService extends Service<Integer>
         
         if (resizeForWeb && imageVO.getMediaType() == MediaType.IMAGE)
         {
-          System.out.println("Processing file: " + imageVO.getSourcePath() + "/" + imageVO.getName());
+          updateMessage("Processing src file: " + imageVO.getSourcePath() + "/" + imageVO.getName());
           BufferedImage result = Scalr.resize(
               ImageIO.read(new File(imageVO.getSourcePath() + "/" + imageVO.getName())), 
               2600);

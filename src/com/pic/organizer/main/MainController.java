@@ -185,6 +185,12 @@ public class MainController implements Initializable
           logNormal("Error writing files: " + event.getSource().getException().getMessage());
           logNormal("------------------------------------------------");
         });
+        fileWriterService.messageProperty().addListener(
+          (inObservable, inOldValue, inNewValue) ->
+          {
+            logNormal(inNewValue);
+          }
+        );
         fileWriterService.writeImageFilesToDestDirectory(imageList, 
             destDir.getText(),
             useDaySubFolders.isSelected(),
