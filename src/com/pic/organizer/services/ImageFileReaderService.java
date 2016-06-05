@@ -15,6 +15,7 @@ import com.drew.metadata.exif.ExifDirectory;
 import com.marasm.exceptions.OperationFailedException;
 import com.marasm.util.FileUtil;
 import com.marasm.util.StringUtil;
+import com.pic.organizer.types.MediaType;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
 /**
@@ -72,7 +73,8 @@ public class ImageFileReaderService
               ImageInfoVO imageFileVO = new ImageInfoVO(file.getName(), 
                 inSrcDir, 
                 info.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL), 
-                info.getString(ExifDirectory.TAG_MAKE));
+                info.getString(ExifDirectory.TAG_MAKE),
+                MediaType.IMAGE);
               
               res.add(imageFileVO);
             }
@@ -83,7 +85,8 @@ public class ImageFileReaderService
             res.add(new ImageInfoVO(file.getName(), 
                 inSrcDir, 
                 new Date(file.lastModified()), 
-                "UNKNOWN"));
+                "UNKNOWN", 
+                MediaType.VIDEO));
           }
           else
           if(file.isDirectory() && inRecursive)

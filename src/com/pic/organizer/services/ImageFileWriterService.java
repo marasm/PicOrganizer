@@ -20,6 +20,7 @@ import org.imgscalr.Scalr;
 import com.marasm.exceptions.OperationFailedException;
 import com.marasm.util.FileUtil;
 import com.marasm.util.StringUtil;
+import com.pic.organizer.types.MediaType;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
 /**
@@ -54,7 +55,6 @@ public class ImageFileWriterService extends Service<Integer>
       try
       {
         this.start();
-        
       }
       catch (Exception e)
       {
@@ -62,6 +62,7 @@ public class ImageFileWriterService extends Service<Integer>
       }
     }
   }
+  
   
   @Override
   protected Task<Integer> createTask()
@@ -115,8 +116,9 @@ public class ImageFileWriterService extends Service<Integer>
             StringUtil.leftZeroPadNumber(sameDayFileCount, 6) + 
             FileUtil.getExtentionFromFileName(imageVO.getName());
         
-        if (resizeForWeb)
+        if (resizeForWeb && imageVO.getMediaType() == MediaType.IMAGE)
         {
+          System.out.println("Processing file: " + imageVO.getSourcePath() + "/" + imageVO.getName());
           BufferedImage result = Scalr.resize(
               ImageIO.read(new File(imageVO.getSourcePath() + "/" + imageVO.getName())), 
               2600);
