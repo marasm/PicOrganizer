@@ -127,6 +127,8 @@ public class ImageFileWriterService extends Service<Integer>
           ImageIO.write(result, 
               FileUtil.getExtentionFromFileName(imageVO.getName()).substring(1), 
               outFile);
+          //update the created date in the outFile to the same as the original
+          outFile.setLastModified(imageVO.getDateTaken().getTime());
         }
         else
         {
