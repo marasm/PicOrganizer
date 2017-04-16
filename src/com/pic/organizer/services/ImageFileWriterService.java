@@ -29,7 +29,8 @@ import com.pic.organizer.valueobjects.ImageInfoVO;
  */
 public class ImageFileWriterService extends Service<Integer>
 {
-  private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+  private static SimpleDateFormat sdf_yyyyMMdd = new SimpleDateFormat("yyyyMMdd");
+  private static SimpleDateFormat sdf_MM_dd = new SimpleDateFormat("MM-dd");
   
   private List<ImageInfoVO> imageList;
   private int maxFilesPerDir;
@@ -92,27 +93,27 @@ public class ImageFileWriterService extends Service<Integer>
         if (folderCount >= maxFilesPerDir)
         {
           folderCount = 0;
-          if (curSubFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
+          if (curSubFolderName.startsWith(sdf_MM_dd.format(imageVO.getDateTaken())))
           {
             sameDayFolderCount++;
           }
         }
         if (StringUtil.isEmpty(curSubFolderName) || 
-            !curSubFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
+            !curSubFolderName.startsWith(sdf_MM_dd.format(imageVO.getDateTaken())))
         {
           folderCount = 0;
           sameDayFolderCount = 1;
           sameDayFileCount = 1;
         }
         
-        curSubFolderName = sdf.format(imageVO.getDateTaken()) + "_" +
+        curSubFolderName = sdf_MM_dd.format(imageVO.getDateTaken()) + "_" +
             StringUtil.leftZeroPadNumber(sameDayFolderCount, 3);
         
         curDestFolder = destDirectory + "/" + 
             (useDaySubfolders ? curSubFolderName : ""); //ONLY use subfolders if requested
         
         curDestFilePath = curDestFolder + "/" +
-            sdf.format(imageVO.getDateTaken()) + "_" + 
+            sdf_yyyyMMdd.format(imageVO.getDateTaken()) + "_" + 
             StringUtil.leftZeroPadNumber(sameDayFileCount, 6) + 
             FileUtil.getExtentionFromFileName(imageVO.getName());
         
