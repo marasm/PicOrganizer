@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
-apply plugin: 'macAppBundle'
+apply plugin: 'edu.sc.seis.macAppBundle'
 
 //apply from: 'resources/app.properties'
 
@@ -18,10 +18,11 @@ buildscript {
   repositories 
   {
     mavenCentral()
+    maven {url "https://plugins.gradle.org/m2/"}
   }
   dependencies 
   {
-    classpath 'edu.sc.seis.gradle:macappbundle:2.0.0'
+    classpath 'edu.sc.seis.macAppBundle:edu.sc.seis.macAppBundle.gradle.plugin:2.3.0'
   }
 }
 
