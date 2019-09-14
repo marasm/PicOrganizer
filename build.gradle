@@ -3,13 +3,12 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'edu.sc.seis.macAppBundle'
 
-//apply from: 'resources/app.properties'
 
 defaultTasks 'distZip'
 
 def getAppVersion = { ->
   Properties props = new Properties()
-  props.load(new FileInputStream("resources/app.properties"))
+  props.load(new FileInputStream("/Users/mkorotkovas/Documents/workspace/PicOrganizer/resources/app.properties"))
   return props.appVersion
 }
 
@@ -66,7 +65,8 @@ configurations {
 dependencies {
   compile 'com.drewnoakes:metadata-extractor:2.4.0-beta-1',
           'org.imgscalr:imgscalr-lib:4.2',
-          'commons-io:commons-io:2.4'
+          'commons-io:commons-io:2.4',
+          'org.apache.commons:commons-imaging:1.0-SNAPSHOT'
 
   testCompile 'junit:junit:4.10'
   
@@ -76,7 +76,7 @@ dependencies {
 repositories {
   mavenCentral()
   maven {url "http://google-api-client-libraries.appspot.com/mavenrepo"}
-
+  maven {url "https://repository.apache.org/content/repositories/snapshots/"}
 }
 
 

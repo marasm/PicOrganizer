@@ -5,6 +5,8 @@ package com.pic.organizer.valueobjects;
 
 import java.util.Date;
 
+import com.pic.organizer.types.MediaType;
+
 /**
  * @author mkorotkovas
  *
@@ -15,6 +17,7 @@ public class ImageInfoVO
   private String sourcePath;
   private Date   dateTaken;
   private String cameraMake;
+  private MediaType mediaType = MediaType.UNKNOWN;
   
   public ImageInfoVO()
   {
@@ -24,12 +27,14 @@ public class ImageInfoVO
   public ImageInfoVO(String inOrigName,  
                      String inSourcePath,
                      Date inDateTaken, 
-                     String inCameraMake)
+                     String inCameraMake,
+                     MediaType inMediaType)
   {
     name = inOrigName;  
     sourcePath = inSourcePath;
     dateTaken = inDateTaken; 
     cameraMake = inCameraMake;
+    mediaType = inMediaType;
   }
   
   
@@ -77,5 +82,15 @@ public class ImageInfoVO
   public void setName(String inName)
   {
     name = inName;
+  }
+
+  public MediaType getMediaType()
+  {
+    return mediaType;
+  }
+
+  public void setMediaType(MediaType inMediaType)
+  {
+    mediaType = inMediaType;
   }
 }

@@ -178,6 +178,19 @@ public class MainController implements Initializable
           logNormal("All Done.");
           logNormal("------------------------------------------------");
         });
+        fileWriterService.setOnFailed((event) -> 
+        {
+          startBtn.setDisable(false);
+          event.getSource().getException().printStackTrace();
+          logNormal("Error writing files: " + event.getSource().getException().getMessage());
+          logNormal("------------------------------------------------");
+        });
+        fileWriterService.messageProperty().addListener(
+          (inObservable, inOldValue, inNewValue) ->
+          {
+            logNormal(inNewValue);
+          }
+        );
         fileWriterService.writeImageFilesToDestDirectory(imageList, 
             destDir.getText(),
             useDaySubFolders.isSelected(),
@@ -210,6 +223,7 @@ public class MainController implements Initializable
     }
     else
       logError("No active task to cancel.");
+    startBtn.setDisable(false);
   }
   
   @FXML 
@@ -225,7 +239,6 @@ public class MainController implements Initializable
     removeSrcDirBtn.setDisable(true);
     destDir.setText(null);
     recursive.setSelected(false);
-    progressBar.setProgress(0);
     startBtn.setDisable(false);
     logNormal("All fields reset.");
     

@@ -15,6 +15,7 @@ import com.drew.metadata.exif.ExifDirectory;
 import com.marasm.exceptions.OperationFailedException;
 import com.marasm.util.FileUtil;
 import com.marasm.util.StringUtil;
+import com.pic.organizer.types.MediaType;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
 /**
@@ -65,13 +66,18 @@ public class ImageFileReaderService
           {
             Metadata mt = ImageMetadataReader.readMetadata(file);
             Directory info = mt.getDirectory(ExifDirectory.class); 
-            
-            ImageInfoVO imageFileVO = new ImageInfoVO(file.getName(), 
+            //only process images that actually have the date && make tags
+            if (info.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL) &&
+                info.containsTag(ExifDirectory.TAG_MAKE))
+            {
+              ImageInfoVO imageFileVO = new ImageInfoVO(file.getName(), 
                 inSrcDir, 
                 info.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL), 
-                info.getString(ExifDirectory.TAG_MAKE));
-            
-            res.add(imageFileVO);
+                info.getString(ExifDirectory.TAG_MAKE),
+                MediaType.IMAGE);
+              
+              res.add(imageFileVO);
+            }
           }
           else 
           if (FileUtil.isAVideoFile(file))
@@ -79,7 +85,8 @@ public class ImageFileReaderService
             res.add(new ImageInfoVO(file.getName(), 
                 inSrcDir, 
                 new Date(file.lastModified()), 
-                "UNKNOWN"));
+                "UNKNOWN", 
+                MediaType.VIDEO));
           }
           else
           if(file.isDirectory() && inRecursive)

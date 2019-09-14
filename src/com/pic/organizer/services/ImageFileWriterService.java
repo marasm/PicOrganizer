@@ -20,6 +20,7 @@ import org.imgscalr.Scalr;
 import com.marasm.exceptions.OperationFailedException;
 import com.marasm.util.FileUtil;
 import com.marasm.util.StringUtil;
+import com.pic.organizer.types.MediaType;
 import com.pic.organizer.valueobjects.ImageInfoVO;
 
 /**
@@ -28,7 +29,8 @@ import com.pic.organizer.valueobjects.ImageInfoVO;
  */
 public class ImageFileWriterService extends Service<Integer>
 {
-  private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+  private static SimpleDateFormat sdf_yyyyMMdd = new SimpleDateFormat("yyyyMMdd");
+  private static SimpleDateFormat sdf_MM_dd = new SimpleDateFormat("MM-dd");
   
   private List<ImageInfoVO> imageList;
   private int maxFilesPerDir;
@@ -54,7 +56,6 @@ public class ImageFileWriterService extends Service<Integer>
       try
       {
         this.start();
-        
       }
       catch (Exception e)
       {
@@ -62,6 +63,7 @@ public class ImageFileWriterService extends Service<Integer>
       }
     }
   }
+  
   
   @Override
   protected Task<Integer> createTask()
@@ -91,31 +93,32 @@ public class ImageFileWriterService extends Service<Integer>
         if (folderCount >= maxFilesPerDir)
         {
           folderCount = 0;
-          if (curSubFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
+          if (curSubFolderName.startsWith(sdf_MM_dd.format(imageVO.getDateTaken())))
           {
             sameDayFolderCount++;
           }
         }
         if (StringUtil.isEmpty(curSubFolderName) || 
-            !curSubFolderName.startsWith(sdf.format(imageVO.getDateTaken())))
+            !curSubFolderName.startsWith(sdf_MM_dd.format(imageVO.getDateTaken())))
         {
           folderCount = 0;
           sameDayFolderCount = 1;
           sameDayFileCount = 1;
         }
         
-        curSubFolderName = sdf.format(imageVO.getDateTaken()) + "_" +
+        curSubFolderName = sdf_MM_dd.format(imageVO.getDateTaken()) + "_" +
             StringUtil.leftZeroPadNumber(sameDayFolderCount, 3);
         
         curDestFolder = destDirectory + "/" + 
             (useDaySubfolders ? curSubFolderName : ""); //ONLY use subfolders if requested
         
         curDestFilePath = curDestFolder + "/" +
-            sdf.format(imageVO.getDateTaken()) + "_" + 
+            sdf_yyyyMMdd.format(imageVO.getDateTaken()) + "_" + 
             StringUtil.leftZeroPadNumber(sameDayFileCount, 6) + 
             FileUtil.getExtentionFromFileName(imageVO.getName());
         
-        if (resizeForWeb)
+        updateMessage("Processing: " + imageVO.getSourcePath() + "/" + imageVO.getName());
+        if (resizeForWeb && imageVO.getMediaType() == MediaType.IMAGE)
         {
           BufferedImage result = Scalr.resize(
               ImageIO.read(new File(imageVO.getSourcePath() + "/" + imageVO.getName())), 
@@ -125,6 +128,8 @@ public class ImageFileWriterService extends Service<Integer>
           ImageIO.write(result, 
               FileUtil.getExtentionFromFileName(imageVO.getName()).substring(1), 
               outFile);
+          //update the created date in the outFile to the same as the original
+          outFile.setLastModified(imageVO.getDateTaken().getTime());
         }
         else
         {
