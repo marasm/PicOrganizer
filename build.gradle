@@ -8,7 +8,7 @@ defaultTasks 'distZip'
 
 def getAppVersion = { ->
   Properties props = new Properties()
-  props.load(new FileInputStream("/Users/mkorotkovas/Documents/workspace/PicOrganizer/resources/app.properties"))
+  props.load(new FileInputStream("resources/app.properties"))
   return props.appVersion
 }
 
