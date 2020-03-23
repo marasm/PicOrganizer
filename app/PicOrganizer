@@ -1,0 +1,3 @@
+#!/bin/sh
+
+java -p ../Java -m PicOrganizer/com.pic.organizer.main.Main

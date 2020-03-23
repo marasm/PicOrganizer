@@ -1,42 +1,60 @@
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'eclipse'
-apply plugin: 'edu.sc.seis.macAppBundle'
+plugins {
+  id 'java'
+  id 'java-library'
+  id 'application'
+  id 'eclipse'
+  id 'org.openjfx.javafxplugin' version '0.0.8'
+  id 'com.zyxist.chainsaw' version '0.3.1' 
+  
+}
 
+defaultTasks 'eclipse'
 
-defaultTasks 'distZip'
+def props = new Properties()
+file("resources/app.properties").withInputStream { props.load(it) }
 
 def getAppVersion = { ->
-  Properties props = new Properties()
-  props.load(new FileInputStream("resources/app.properties"))
   return props.appVersion
 }
 
-buildscript {
-  buildDir = 'dist'
-  repositories 
-  {
-    mavenCentral()
-    maven {url "https://plugins.gradle.org/m2/"}
-  }
-  dependencies 
-  {
-    classpath 'edu.sc.seis.macAppBundle:edu.sc.seis.macAppBundle.gradle.plugin:2.3.0'
-  }
-}
 
 allprojects
 {
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
+  sourceCompatibility = 13
+  targetCompatibility = 13
   mainClassName = 'com.pic.organizer.main.Main'
+  version = getAppVersion()
 }
 
-macAppBundle 
+eclipse 
 {
-  mainClassName = 'com.pic.organizer.main.Main'
-  icon = 'resources/images/icon.icns'
+  classpath 
+  {
+    file 
+    {
+      whenMerged {
+        entries.findAll{isModule(it)}.each { //(1)
+            it.entryAttributes['module'] = 'true'
+        }
+  
+        entries.findAll{isSource(it) && isTestScope(it) }.each {
+            it.entryAttributes['test'] = 'true'
+        }
+  
+        entries.findAll{ isLibrary(it) && isTestScope(it) }.each {
+            it.entryAttributes['test'] = 'true'
+        }
+      }
+    }
+  }
 }
+
+
+boolean isLibrary(entry) { return entry.properties.kind.equals('lib') }
+boolean isTestScope(entry) { return entry.entryAttributes.get('gradle_used_by_scope').equals('test'); }
+boolean isModule(entry) { isLibrary(entry) && !isTestScope(entry); }
+boolean isSource(entry) { return entry.properties.kind.equals('src'); }
+
 
 sourceSets {
   main
@@ -62,27 +80,40 @@ sourceSets {
 configurations {
 }
 
-dependencies {
-  compile 'com.drewnoakes:metadata-extractor:2.4.0-beta-1',
-          'org.imgscalr:imgscalr-lib:4.2',
-          'commons-io:commons-io:2.4',
-          'org.apache.commons:commons-imaging:1.0-SNAPSHOT'
-
-  testCompile 'junit:junit:4.10'
-  
-
-}
-
 repositories {
   mavenCentral()
   maven {url "http://google-api-client-libraries.appspot.com/mavenrepo"}
   maven {url "https://repository.apache.org/content/repositories/snapshots/"}
 }
 
+dependencies {
+  
+  runtimeClasspath 'com.drewnoakes:metadata-extractor:2.4.0-beta-1', 
+      'org.imgscalr:imgscalr-lib:4.2',
+      'commons-io:commons-io:2.4',
+      'org.apache.commons:commons-imaging:1.0-SNAPSHOT'
+
+  compileClasspath 'com.drewnoakes:metadata-extractor:2.4.0-beta-1', 
+      'org.imgscalr:imgscalr-lib:4.2',
+      'commons-io:commons-io:2.4',
+      'org.apache.commons:commons-imaging:1.0-SNAPSHOT'
+          
+
+}
+
+javafx {
+  version = "14"
+  modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
+}
+
 
 jar {
   baseName = "PicOrganizer"
   version = getAppVersion()
+  manifest {
+        attributes 'Main-Class': 'com.pic.organizer.main.Main'
 }
 
-distZip.dependsOn test
+    
+
+}
